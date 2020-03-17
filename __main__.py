@@ -1,30 +1,34 @@
 import json
 import os
 
-from src.model.Graph import Graph
-from src.model.Link import Link
-from src.model.Node import Node
+from model.Graph import Graph
+from model.Link import Link
+from model.Node import Node
 
-path = '/media/timo/DATA/PycharmProjects/dhbw-labor-netztechnik/'
+path = '/mnt/DATA/PycharmProjects/dhbw-labor-netztechnik/'
 
 
-def main():
+def read_file():
     with open(os.path.join(path, 'files/graph.json'), 'r') as file:
         data = json.load(file)
         nodes = []
         links = []
         if data['nodes']:
             for node in data['nodes']:
-                if node['node_id'] and node['cost']:
-                    nodes.append(Node(node['node_id'], node['cost']))
+                if node['node_id'] and node['name']:
+                    nodes.append(Node(node['node_id'], node['name']))
 
         if data['links']:
             for link in data['links']:
                 if link['node_id_1'] and link['node_id_2'] and link['cost']:
                     links.append(Link(link['node_id_1'], link['node_id_2'], link['cost']))
+        return Graph(nodes, links)
 
-        graph = Graph(nodes, links)
-        print(graph)
+
+def main():
+    graph = read_file()
+    graph.find_links()
+    graph.spann_tree(1)
 
 
 if __name__ == '__main__':
