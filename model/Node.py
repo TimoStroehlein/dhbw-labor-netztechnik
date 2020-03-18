@@ -10,9 +10,3 @@ class Node:
         self.sum_cost = sum_cost    # Sum cost from this node to the root node
         self.next_link = next_link  # Next link to the root
         self.msg_count = msg_count  # Broadcast message count
-
-    def update(self, root_id, sum_cost, next_link):
-        self.root_id = root_id
-        self.sum_cost = sum_cost
-        self.next_link = next_link
-        self.msg_count += 1

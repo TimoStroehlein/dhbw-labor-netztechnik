@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from model.Graph import Graph
 from model.Link import Link
@@ -9,26 +10,26 @@ path = '/mnt/DATA/PycharmProjects/dhbw-labor-netztechnik/'
 
 
 def read_file():
-    with open(os.path.join(path, 'files/graph.json'), 'r') as file:
-        data = json.load(file)
+    with open(os.path.join(path, 'files/graph.st'), 'r') as file:
         nodes = []
         links = []
-        if data['nodes']:
-            for node in data['nodes']:
-                if node['node_id'] and node['name']:
-                    nodes.append(Node(node['node_id'], node['name']))
-
-        if data['links']:
-            for link in data['links']:
-                if link['node_id_1'] and link['node_id_2'] and link['cost']:
-                    links.append(Link(link['node_id_1'], link['node_id_2'], link['cost']))
+        for line in file:
+            # Check if line is node
+            result = re.search('^\\s*([a-zA-Z]+)\\s?=\\s?([0-9]*);.*', line)
+            if result:
+                nodes.append(Node(result.group(2), result.group(1)))
+                result.group(1)
+            # Check if line is link
+            result = re.search('^\\s*([a-zA-Z]+)\\s?-\\s?([a-zA-Z])\\s?:\\s?([0-9]*);.*', line)
+            if result:
+                links.append(Link(result.group(1), result.group(2), int(result.group(3))))
         return Graph(nodes, links)
 
 
 def main():
     graph = read_file()
     graph.find_links()
-    graph.spann_tree(1)
+    graph.spann_tree(10)
 
 
 if __name__ == '__main__':
